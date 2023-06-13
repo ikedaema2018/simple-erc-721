@@ -31,7 +31,7 @@ contract SampleErc721 is IERC721 {
         address from,
         address to,
         uint256 tokenId
-    ) public {
+    ) public virtual {
         require(
             from == tokenIdToOwner[tokenId] || tokenIdToApproved[tokenId] == to,
             "You are not the owner of this token"
@@ -52,7 +52,7 @@ contract SampleErc721 is IERC721 {
         address to,
         uint256 tokenId,
         bytes memory data
-    ) public {
+    ) public virtual {
         require(
             from == tokenIdToOwner[tokenId] || tokenIdToApproved[tokenId] == to,
             "You are not the owner of this token"
@@ -108,6 +108,11 @@ contract SampleErc721 is IERC721 {
     function supportsInterface(
         bytes4 interfaceId
     ) public pure returns (bool) {
+        // ERC165 720じゃなくていいの？
         return interfaceId == 0x80ac58cd;
+    }
+
+    function test() public pure returns (uint256) {
+        return 1;
     }
 }
