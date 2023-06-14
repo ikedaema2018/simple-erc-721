@@ -27,6 +27,7 @@ contract SampleErc721 is IERC721 {
         return tokenIdToOwner[tokenId];
     }
 
+    // @TODO implement IERC721Receiver.onERC721Received + require
     function safeTransferFrom(
         address from,
         address to,
@@ -47,6 +48,7 @@ contract SampleErc721 is IERC721 {
         ownerToBalance[to] += 1;
     }
 
+    // @TODO implement IERC721Receiver.onERC721Received + require
     function safeTransferFrom(
         address from,
         address to,
@@ -70,7 +72,7 @@ contract SampleErc721 is IERC721 {
 
     function transferFrom(address from, address to, uint256 tokenId) public {
         require(
-            from == tokenIdToOwner[tokenId] || tokenIdToApproved[tokenId] == to,
+            from == tokenIdToOwner[tokenId] || tokenIdToApproved[tokenId] == to || isApprovedForAll(tokenIdToOwner[tokenId], msg.sender),
             "You are not the owner of this token"
         );
 
@@ -90,13 +92,17 @@ contract SampleErc721 is IERC721 {
         tokenIdToApproved[tokenId] = to;
     }
 
+    // @TODO 0がセットされているときに0が返されるか確認
     function getApproved(
         uint256 tokenId
     ) public view override returns (address operator) {
+        require(tokenIdToOwner[tokenId] != address(0), "This token does not exist");
         return tokenIdToApproved[tokenId];
     }
 
+    // @TODO 0アドレスを拒否するのは正しい？
     function setApprovalForAll(address operator, bool _approved) public {
+        require(operator != address(0), "You cannot approve the zero address");
         operatorApprovals[msg.sender][operator] = _approved;
     }
 
