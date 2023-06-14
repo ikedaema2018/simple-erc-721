@@ -69,7 +69,7 @@ describe("SampleErc721", function () {
         deploySampleErc721Fixture
       );
       // 型エラーになってる謎
-      await sampleErc721.safeTransferFrom(
+      await sampleErc721["safeTransferFrom(address,address,uint256)"](
         owner.address,
         otherAccount.address,
         0
@@ -82,18 +82,14 @@ describe("SampleErc721", function () {
       const { sampleErc721, owner, otherAccount } = await loadFixture(
         deploySampleErc721Fixture
       );
-      //   // 型エラーになってる謎
-      //   await sampleErc721.safeTransferFrom(
-      //     owner.address,
-      //     otherAccount.address,
-      //     0,
-      //     0
-      //   );
-      //   const token1_Owner = await sampleErc721.ownerOf(0);
-      //   expect(token1_Owner).to.equal(otherAccount.address);
-
-      const test = await sampleErc721.test();
-      console.log(test);
+      await sampleErc721["safeTransferFrom(address,address,uint256,bytes)"](
+        owner.address,
+        otherAccount.address,
+        0,
+        "0x1234"
+      );
+      const token1_Owner = await sampleErc721.ownerOf(0);
+      expect(token1_Owner).to.equal(otherAccount.address);
     });
   });
 });
