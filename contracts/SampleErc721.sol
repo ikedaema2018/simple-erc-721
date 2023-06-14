@@ -85,6 +85,7 @@ contract SampleErc721 is IERC721 {
             msg.sender == tokenIdToOwner[tokenId],
             "You are not the owner of this token"
         );
+        require(to != address(0), "You cannot approve the zero address");
         tokenIdToApproved[tokenId] = to;
     }
 
