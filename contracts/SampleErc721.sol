@@ -80,10 +80,11 @@ contract SampleErc721 is IERC721 {
         ownerToBalance[to] += 1;
     }
 
+    // ownerかapproveされているユーザーのみ呼び出せる 
     function approve(address to, uint256 tokenId) public {
         require(
-            msg.sender == tokenIdToOwner[tokenId],
-            "You are not the owner of this token"
+            msg.sender == tokenIdToOwner[tokenId] || isApprovedForAll(tokenIdToOwner[tokenId], msg.sender) || tokenIdToApproved[tokenId] == msg.sender,
+            "You are not the owner or approved of this token"
         );
         require(to != address(0), "You cannot approve the zero address");
         tokenIdToApproved[tokenId] = to;
