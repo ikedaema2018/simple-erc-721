@@ -31,7 +31,11 @@ describe("SampleErc721", function () {
       const { sampleErc721, owner, otherAccount } = await loadFixture(
         deploySampleErc721Fixture
       );
-      await sampleErc721.transferFrom(owner.address, otherAccount.address, 0);
+      await expect(
+        sampleErc721.transferFrom(owner.address, otherAccount.address, 0)
+      )
+        .to.emit(sampleErc721, "Transfer")
+        .withArgs(owner.address, otherAccount.address, 0);
       const token1_Owner = await sampleErc721.ownerOf(0);
       expect(token1_Owner).to.equal(otherAccount.address);
     });
@@ -40,7 +44,9 @@ describe("SampleErc721", function () {
       const { sampleErc721, owner, otherAccount } = await loadFixture(
         deploySampleErc721Fixture
       );
-      await sampleErc721.approve(otherAccount.address, 0);
+      await expect(sampleErc721.approve(otherAccount.address, 0))
+        .to.emit(sampleErc721, "Approval")
+        .withArgs(owner.address, otherAccount.address, 0);
 
       const approvedOwner = await sampleErc721.getApproved(0);
       expect(approvedOwner).to.equal(otherAccount.address);
@@ -56,7 +62,9 @@ describe("SampleErc721", function () {
       const { sampleErc721, owner, otherAccount } = await loadFixture(
         deploySampleErc721Fixture
       );
-      await sampleErc721.setApprovalForAll(otherAccount.address, true);
+      await expect(sampleErc721.setApprovalForAll(otherAccount.address, true))
+        .to.emit(sampleErc721, "ApprovalForAll")
+        .withArgs(owner.address, otherAccount.address, true);
       const approvedAll = await sampleErc721.isApprovedForAll(
         owner,
         otherAccount
@@ -69,11 +77,16 @@ describe("SampleErc721", function () {
         deploySampleErc721Fixture
       );
       // 型エラーになってる謎
-      await sampleErc721["safeTransferFrom(address,address,uint256)"](
-        owner.address,
-        otherAccount.address,
-        0
-      );
+      await expect(
+        sampleErc721["safeTransferFrom(address,address,uint256)"](
+          owner.address,
+          otherAccount.address,
+          0
+        )
+      )
+        .to.emit(sampleErc721, "Transfer")
+        .withArgs(owner.address, otherAccount.address, 0);
+
       const token1_Owner = await sampleErc721.ownerOf(0);
       expect(token1_Owner).to.equal(otherAccount.address);
     });
@@ -82,12 +95,16 @@ describe("SampleErc721", function () {
       const { sampleErc721, owner, otherAccount } = await loadFixture(
         deploySampleErc721Fixture
       );
-      await sampleErc721["safeTransferFrom(address,address,uint256,bytes)"](
-        owner.address,
-        otherAccount.address,
-        0,
-        "0x1234"
-      );
+      await expect(
+        sampleErc721["safeTransferFrom(address,address,uint256,bytes)"](
+          owner.address,
+          otherAccount.address,
+          0,
+          "0x1234"
+        )
+      )
+        .to.emit(sampleErc721, "Transfer")
+        .withArgs(owner.address, otherAccount.address, 0);
       const token1_Owner = await sampleErc721.ownerOf(0);
       expect(token1_Owner).to.equal(otherAccount.address);
     });

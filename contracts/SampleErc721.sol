@@ -9,8 +9,6 @@ contract SampleErc721 is IERC721 {
     mapping(uint256 => address) tokenIdToApproved;
     mapping(address => mapping(address => bool)) operatorApprovals;
 
-    event Approve(address owner, address approved, uint256 tokenId);
-
     constructor() {
         ownerToBalance[msg.sender] = 2;
         tokenIdToOwner[0] = msg.sender;
@@ -99,7 +97,7 @@ contract SampleErc721 is IERC721 {
         require(to != address(0), "You cannot approve the zero address");
         tokenIdToApproved[tokenId] = to;
 
-        emit Approve(tokenIdToOwner[tokenId], to, tokenId);
+        emit Approval(tokenIdToOwner[tokenId], to, tokenId);
     }
 
     // @TODO 0がセットされているときに0が返されるか確認
