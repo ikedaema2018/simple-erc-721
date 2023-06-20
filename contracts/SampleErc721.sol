@@ -9,6 +9,8 @@ contract SampleErc721 is IERC721 {
     mapping(uint256 => address) tokenIdToApproved;
     mapping(address => mapping(address => bool)) operatorApprovals;
 
+    event Approve(address owner, address approved, uint256 tokenId);
+
     constructor() {
         ownerToBalance[msg.sender] = 2;
         tokenIdToOwner[0] = msg.sender;
@@ -46,6 +48,8 @@ contract SampleErc721 is IERC721 {
         tokenIdToOwner[tokenId] = to;
         ownerToBalance[from] -= 1;
         ownerToBalance[to] += 1;
+
+        emit Transfer(from, to, tokenId);
     }
 
     // @TODO implement IERC721Receiver.onERC721Received + require
@@ -68,6 +72,8 @@ contract SampleErc721 is IERC721 {
         tokenIdToOwner[tokenId] = to;
         ownerToBalance[from] -= 1;
         ownerToBalance[to] += 1;
+
+        emit Transfer(from, to, tokenId);
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public {
@@ -80,6 +86,8 @@ contract SampleErc721 is IERC721 {
         tokenIdToOwner[tokenId] = to;
         ownerToBalance[from] -= 1;
         ownerToBalance[to] += 1;
+
+        emit Transfer(from, to, tokenId);
     }
 
     // ownerかapproveされているユーザーのみ呼び出せる 
@@ -90,6 +98,8 @@ contract SampleErc721 is IERC721 {
         );
         require(to != address(0), "You cannot approve the zero address");
         tokenIdToApproved[tokenId] = to;
+
+        emit Approve(tokenIdToOwner[tokenId], to, tokenId);
     }
 
     // @TODO 0がセットされているときに0が返されるか確認
@@ -104,6 +114,8 @@ contract SampleErc721 is IERC721 {
     function setApprovalForAll(address operator, bool _approved) public {
         require(operator != address(0), "You cannot approve the zero address");
         operatorApprovals[msg.sender][operator] = _approved;
+
+        emit ApprovalForAll(msg.sender, operator, _approved);
     }
 
     function isApprovedForAll(
