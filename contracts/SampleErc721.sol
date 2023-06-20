@@ -131,8 +131,4 @@ contract SampleErc721 is IERC721 {
         // ERC165 720じゃなくていいの？
         return interfaceId == 0x80ac58cd;
     }
-
-    function test() public pure returns (uint256) {
-        return 1;
-    }
 }
