@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.9;
 import "hardhat/console.sol";
-import "./External.sol";
+import "./_External.sol";
 
 contract Test {
     function invoke() public {
