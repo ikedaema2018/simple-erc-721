@@ -2,12 +2,15 @@
 pragma solidity ^0.8.9;
 import "hardhat/console.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "./ERC721Receiver.sol";
 
-contract SampleErc721 is IERC721 {
+contract SampleErc721 is IERC721, ERC721Receiver {
     mapping(address => uint256) ownerToBalance;
     mapping(uint256 => address) tokenIdToOwner;
     mapping(uint256 => address) tokenIdToApproved;
     mapping(address => mapping(address => bool)) operatorApprovals;
+
+    error ERC721InvalidReceiver(address receiver);
 
     constructor() {
         ownerToBalance[msg.sender] = 2;
@@ -72,6 +75,10 @@ contract SampleErc721 is IERC721 {
         ownerToBalance[to] += 1;
 
         emit Transfer(from, to, tokenId);
+
+        if (!checkOnERC721Received(from, to, tokenId, data)) {
+            revert ERC721InvalidReceiver(to);
+        }
     }
 
     function transferFrom(address from, address to, uint256 tokenId) public {
@@ -126,7 +133,31 @@ contract SampleErc721 is IERC721 {
     function supportsInterface(
         bytes4 interfaceId
     ) public pure returns (bool) {
-        // ERC165 720じゃなくていいの？
+        // @TODO この数字の意味がわからない
         return interfaceId == 0x80ac58cd;
+    }
+
+    function checkOnERC721Received(
+        address from,
+        address to,
+        uint256 tokenId,
+        bytes memory data
+    ) private returns (bool) {
+        if (to.code.length > 0) {
+            try IERC721Receiver(to).onERC721Received(msg.sender, from, tokenId, data) returns (bytes4 retval) {
+                return retval == ERC721Receiver.onERC721Received.selector;
+            } catch (bytes memory reason) {
+                if (reason.length == 0) {
+                    revert ERC721InvalidReceiver(to);
+                } else {
+                    /// @solidity memory-safe-assembly
+                    assembly {
+                        revert(add(32, reason), mload(reason))
+                    }
+                }
+            }
+        } else {
+            return true;
+        }
     }
 }
