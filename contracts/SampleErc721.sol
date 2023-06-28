@@ -30,7 +30,6 @@ contract SampleErc721 is IERC721, ERC721Receiver {
         return tokenIdToOwner[tokenId];
     }
 
-    // @TODO implement IERC721Receiver.onERC721Received + require
     function safeTransferFrom(
         address from,
         address to,
@@ -51,9 +50,11 @@ contract SampleErc721 is IERC721, ERC721Receiver {
         ownerToBalance[to] += 1;
 
         emit Transfer(from, to, tokenId);
+        if (!checkOnERC721Received(from, to, tokenId, '')) {
+            revert ERC721InvalidReceiver(to);
+        }
     }
 
-    // @TODO implement IERC721Receiver.onERC721Received + require
     function safeTransferFrom(
         address from,
         address to,
@@ -95,7 +96,6 @@ contract SampleErc721 is IERC721, ERC721Receiver {
         emit Transfer(from, to, tokenId);
     }
 
-    // ownerかapproveされているユーザーのみ呼び出せる 
     function approve(address to, uint256 tokenId) public {
         require(
             msg.sender == tokenIdToOwner[tokenId] || isApprovedForAll(tokenIdToOwner[tokenId], msg.sender) || tokenIdToApproved[tokenId] == msg.sender,
@@ -107,7 +107,6 @@ contract SampleErc721 is IERC721, ERC721Receiver {
         emit Approval(tokenIdToOwner[tokenId], to, tokenId);
     }
 
-    // @TODO 0がセットされているときに0が返されるか確認
     function getApproved(
         uint256 tokenId
     ) public view override returns (address operator) {
@@ -133,8 +132,8 @@ contract SampleErc721 is IERC721, ERC721Receiver {
     function supportsInterface(
         bytes4 interfaceId
     ) public pure returns (bool) {
-        // @TODO この数字の意味がわからない
-        return interfaceId == 0x80ac58cd;
+        bytes4 iErc721InterfaceId = 0x80ac58cd;
+        return interfaceId == iErc721InterfaceId;
     }
 
     function checkOnERC721Received(
