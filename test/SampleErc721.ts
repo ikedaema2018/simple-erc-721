@@ -95,7 +95,6 @@ describe("SampleErc721", function () {
       const { sampleErc721, owner, otherAccount } = await loadFixture(
         deploySampleErc721Fixture
       );
-      // 型エラーになってる謎
       await expect(
         sampleErc721["safeTransferFrom(address,address,uint256)"](
           owner.address,

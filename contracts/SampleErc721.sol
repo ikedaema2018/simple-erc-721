@@ -114,7 +114,6 @@ contract SampleErc721 is IERC721, ERC721Receiver {
         return tokenIdToApproved[tokenId];
     }
 
-    // @TODO 0アドレスを拒否するのは正しい？
     function setApprovalForAll(address operator, bool _approved) public {
         require(operator != address(0), "You cannot approve the zero address");
         operatorApprovals[msg.sender][operator] = _approved;
