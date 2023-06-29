@@ -209,5 +209,17 @@ describe("SampleErc721", function () {
       );
       expect(approvedAll).to.equal(false);
     });
+
+    it("safeTransferFrom succeed isApprovedForAll", async function () {
+      const { sampleErc721, owner, otherAccount, otherAccount2 } =
+        await loadFixture(deploySampleErc721Fixture);
+      await sampleErc721.setApprovalForAll(otherAccount.address, true);
+      await sampleErc721
+        .connect(otherAccount)
+        ["safeTransferFrom(address,address,uint256)"](owner, otherAccount2, 0);
+
+      const token1_Owner = await sampleErc721.ownerOf(0);
+      expect(token1_Owner).to.equal(otherAccount2.address);
+    });
   });
 });

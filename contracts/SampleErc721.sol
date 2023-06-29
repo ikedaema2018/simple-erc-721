@@ -37,7 +37,7 @@ contract SampleErc721 is IERC721, ERC721Receiver {
         uint256 tokenId
     ) public virtual {
         require(
-            from == tokenIdToOwner[tokenId] || tokenIdToApproved[tokenId] == to,
+            from == tokenIdToOwner[tokenId] || tokenIdToApproved[tokenId] == to || isApprovedForAll(tokenIdToOwner[tokenId], msg.sender),
             "You are not the owner of this token"
         );
         require(
@@ -63,7 +63,7 @@ contract SampleErc721 is IERC721, ERC721Receiver {
         bytes memory data
     ) public virtual {
         require(
-            from == tokenIdToOwner[tokenId] || tokenIdToApproved[tokenId] == to,
+            from == tokenIdToOwner[tokenId] || tokenIdToApproved[tokenId] == to || isApprovedForAll(tokenIdToOwner[tokenId], msg.sender),
             "You are not the owner of this token"
         );
         require(
