@@ -3,13 +3,14 @@ import { expect } from "chai";
 import { ethers } from "hardhat";
 
 describe("SampleErc721", function () {
+  const notExistsAddress = "d46641e1f3547af87a93";
   async function deploySampleErc721Fixture() {
-    const [owner, otherAccount] = await ethers.getSigners();
+    const [owner, otherAccount, otherAccount2] = await ethers.getSigners();
 
     const SampleErc721 = await ethers.getContractFactory("SampleErc721");
     const sampleErc721 = await SampleErc721.deploy();
 
-    return { sampleErc721, owner, otherAccount };
+    return { sampleErc721, owner, otherAccount, otherAccount2 };
   }
 
   async function deployERC721ReceiveTestContract() {
@@ -195,8 +196,18 @@ describe("SampleErc721", function () {
         deploySampleErc721Fixture
       );
       await expect(
-        sampleErc721.getApproved("d46641e1f3547af87a93")
+        sampleErc721.getApproved(notExistsAddress)
       ).to.be.rejectedWith();
+    });
+
+    it("isApprovedForAll not exist", async function () {
+      const { sampleErc721, owner, otherAccount, otherAccount2 } =
+        await loadFixture(deploySampleErc721Fixture);
+      const approvedAll = await sampleErc721.isApprovedForAll(
+        otherAccount,
+        otherAccount2
+      );
+      expect(approvedAll).to.equal(false);
     });
   });
 });
