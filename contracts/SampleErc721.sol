@@ -11,6 +11,7 @@ contract SampleErc721 is IERC721, ERC721Receiver {
     mapping(address => mapping(address => bool)) operatorApprovals;
 
     error ERC721InvalidReceiver(address receiver);
+    error ERC721NonexistentToken(uint256 tokenId);
 
     constructor() {
         ownerToBalance[msg.sender] = 2;
@@ -110,8 +111,11 @@ contract SampleErc721 is IERC721, ERC721Receiver {
     function getApproved(
         uint256 tokenId
     ) public view override returns (address operator) {
-        require(tokenIdToOwner[tokenId] != address(0), "This token does not exist");
-        return tokenIdToApproved[tokenId];
+        address approvedAddress = tokenIdToApproved[tokenId];
+        if (approvedAddress == address(0)) {
+            revert ERC721NonexistentToken(tokenId);
+        }
+        return approvedAddress;
     }
 
     function setApprovalForAll(address operator, bool _approved) public {

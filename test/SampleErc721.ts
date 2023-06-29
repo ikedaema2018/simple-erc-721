@@ -189,5 +189,14 @@ describe("SampleErc721", function () {
         )
       ).to.be.rejectedWith();
     });
+
+    it("getApprove not exists token", async function () {
+      const { sampleErc721, owner } = await loadFixture(
+        deploySampleErc721Fixture
+      );
+      await expect(
+        sampleErc721.getApproved("d46641e1f3547af87a93")
+      ).to.be.rejectedWith();
+    });
   });
 });
