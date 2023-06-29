@@ -12,3 +12,4 @@ npx hardhat run --network localhost scripts/deploy_erc_21.ts
 
 ・EIP の IERC721 と比較してみて機能が正しく実装されてるか確認する
 ・ミントとか
+・処理の共通化
